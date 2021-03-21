@@ -1,19 +1,47 @@
 import React from 'react'
 import './login.less'
 import logo from './images/logo.png'
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-
+import {reqLogin} from "../../api";
+import memoryUtils from "../../utils/memoryUtils";
+import storageUtils from '../../utils/storeageUtils'
+import {Redirect} from "react-router-dom";
 
 
 export default class Login extends React.Component<any, any>{
 
     onFinish = (values: any) => {
-        console.log(`用户名: ${values.username} 密码: ${values.password}`);
+        const {username, password} = values
+
+        reqLogin(username, password).then(
+            req=>{
+                // console.log(req.data.status)
+                // 服务器返回状态码1登陆失败 0登陆成功
+                if (req.data.status === 0){
+                    // 传递用户信息给主页面显示
+                    storageUtils.saveUser(JSON.stringify(req.data.data))
+                    memoryUtils.user = req.data.data
+                    message.success("登陆成功,跳转到主界面")
+                    this.props.history.replace('/')
+
+                } else {
+                    message.error("用户名密码错误")
+                }
+            },
+        ).catch(err =>{
+            message.error("网络出错了，请稍后再试试")
+        })
     }
 
-
     render() {
+        // 如果存在用户id说明已经登陆, 重定向到登陆页面
+        const user = memoryUtils.user
+        console.log(user);
+        if (user._id !== ""){
+            return <Redirect to="/"/>
+        }
+
         return (
             <div className="login">
                 <header className="login-header">
