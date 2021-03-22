@@ -1,6 +1,6 @@
 import React from 'react'
 import './login.less'
-import logo from './images/logo.png'
+import logo from '../../assets/images/logo.png'
 import { Form, Input, Button, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import {reqLogin} from "../../api";
@@ -37,7 +37,6 @@ export default class Login extends React.Component<any, any>{
     render() {
         // 如果存在用户id说明已经登陆, 重定向到登陆页面
         const user = memoryUtils.user
-        console.log(user);
         if (user._id !== ""){
             return <Redirect to="/"/>
         }
