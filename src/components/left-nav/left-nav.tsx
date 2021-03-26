@@ -46,7 +46,6 @@ class LeftNav extends React.Component<any, any>{
                 const cItem = item.children.find(cItem => cItem.link === path)
                 if (cItem){
                     this.openKey = item.link
-                    console.log(item.link)
                 }
                 return (
                     // @ts-ignore

@@ -1,18 +1,23 @@
 import React from 'react'
-import { Card, Button, Table, Modal  } from 'antd'
+import {Card, Button, Table, Modal} from 'antd'
 import { reqGetCategoryList } from "../../api";
 import {
     PlusOutlined,
     ArrowRightOutlined
 } from '@ant-design/icons'
 
+import AddForm from "./add-form";
+import UpdateForm from "./update-form";
 /*
   商品管理路由
  */
 
 
 export default class Category extends React.Component<any, any>{
+    //更新模态框传入category name信息
+    category: any
 
+    form: any
 
     state = {
         categorys: [],
@@ -20,9 +25,14 @@ export default class Category extends React.Component<any, any>{
         parentId: '0',
         subCategorys: [],
         parentName: '',
-        showStatus: 0 // 模态框的显示状态 0 全不显示 1 添加模态框显示 2 更新模态框显示
-
+        showStatus: 0, // 模态框的显示状态 0 全不显示 1 添加模态框显示 2 更新模态框显示
     }
+
+    UNSAFE_componentWillMount() {
+        //获取商品列表
+        this.getCategoryList()
+    }
+
 
     getCategoryList =()=>{
         const {parentId} = this.state
@@ -66,6 +76,8 @@ export default class Category extends React.Component<any, any>{
         this.setState({parentId: text._id, parentName: text.name}, ()=>{ this.getCategoryList() })
     }
 
+
+
     //处理模态框取消按钮点击事件
     handleCancel=()=>{
         this.setState({
@@ -77,26 +89,24 @@ export default class Category extends React.Component<any, any>{
         this.setState({
             showStatus: 1
         })
-        console.log('添加商品')
+        //console.log('添加商品')
         //处理取消事件
         //this.handleCancel()
     }
-    //模态框更新商品
-    updateCategory =()=>{
+
+    showUpdate = (categary:any)=>{
+        this.category = categary
         this.setState({
             showStatus: 2
         })
-        console.log('更新商品')
-        //处理取消事件
-        //this.handleCancel()
     }
 
+    //104
+    updateCategory = () => {
+        console.log(this.form.getFieldValue('categoryname'))
+    };
 
 
-    UNSAFE_componentWillMount() {
-        //获取商品列表
-        this.getCategoryList()
-    }
 
     render() {
         const title = this.state.parentId === '0' ? '一级分类' :
@@ -105,6 +115,9 @@ export default class Category extends React.Component<any, any>{
                 <ArrowRightOutlined style={{marginRight: '10px'}}/>
                 {this.state.parentName}
             </div>)
+
+        //更新模态框传入category name信息 p156
+        const category = this.category || {}
         const columns = [
             {
                 title: '分类名称',
@@ -117,7 +130,7 @@ export default class Category extends React.Component<any, any>{
                 render: (text:any)=> {
                     return (
                         <div>
-                            <Button type="link" onClick={this.updateCategory}>修改分类</Button>
+                            <Button type="link" onClick={()=>{this.showUpdate(text)}}>修改分类</Button>
                             {this.state.parentId === '0' ?
                                 <Button type="link" onClick={this.getSubCategory.bind(this, text)}>查看子分类</Button>
                                 : null
@@ -129,13 +142,30 @@ export default class Category extends React.Component<any, any>{
             }
         ];
         return (
-            <Card title={title} extra={<Button onClick={this.addCategory} type={"primary"} icon={<PlusOutlined />} >添加</Button>}>
+            <Card title={title}
+                  extra={<Button onClick={this.addCategory} type={"primary"} icon={<PlusOutlined />} >添加</Button>}>
 
-                <Modal title="Basic Modal" visible={this.state.showStatus === 1} onCancel={this.handleCancel} onOk={this.addCategory}>
-                    <p>添加模态框显示</p>
+                <Modal title="添加商品"
+                       visible={this.state.showStatus === 1}
+                       onCancel={this.handleCancel}
+                       onOk={this.addCategory}
+                       cancelText="取消"
+                       okText="确认">
+                    <AddForm />
                 </Modal>
-                <Modal title="Basic Modal" visible={this.state.showStatus === 2} onCancel={this.handleCancel} onOk={this.updateCategory}>
-                    <p>更新模态框显示</p>
+
+                <Modal title="更新商品"
+                       visible={this.state.showStatus === 2}
+                       onCancel={this.handleCancel}
+                       onOk={this.updateCategory}
+                       cancelText="取消"
+                       okText="确认"
+                       destroyOnClose>
+                    {/*Modal隐藏显示时没有销毁 Modal 里的子元素UserForm，导致都每次读取上次的值。需加上 destroyOnClose*/}
+                    <UpdateForm
+                        categoryName={category.name}
+                        setForm={(form:any)=>{this.form = form}}
+                    />
                 </Modal>
 
                 <Table
