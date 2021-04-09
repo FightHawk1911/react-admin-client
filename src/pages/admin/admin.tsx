@@ -27,11 +27,11 @@ export default class Admin extends React.Component<any, any>{
 
     render() {
         const user = memoryUtils.user
-        if (user._id === ""){
+        if (user.id === ""){
             return <Redirect to='/login'/>
         }
         return (
-            <Layout style={{height: '100%'}}>
+            <Layout style={{minHeight: '100%'}}>
                 <Sider>
                     <LeftNav/>
                 </Sider>

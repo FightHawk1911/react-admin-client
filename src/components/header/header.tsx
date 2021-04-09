@@ -37,7 +37,7 @@ class Header extends React.Component<any, any>{
     handleModalOk=()=>{
         //点击模态框ok 从localstorage删除用户信息
         storeageUtils.removeUser()
-        memoryUtils.user = {_id: '', username: ''};
+        memoryUtils.user = {id: '', username: ''};
 
         //重定向到登录界面
         this.props.history.replace('/login')
@@ -54,10 +54,10 @@ class Header extends React.Component<any, any>{
     getTitle=()=>{
         const pathname = this.props.location.pathname
         menuList.forEach(item =>{
-            if (item.link === pathname) {
+            if (item.key === pathname) {
                 this.title = item.title
             } else if (item.children) {
-                const cItem = item.children.find(item => item.link === pathname)
+                const cItem = item.children.find(item => item.key === pathname)
                 if (cItem) {
                     this.title = cItem.title
                 }

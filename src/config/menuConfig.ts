@@ -4,63 +4,65 @@
 //定义菜单接口
 export interface Imenu{
     title: string,
-    link: string,
+    key: string,
     icon: string,
-    children?: Imenu[]
+    children?: Imenu[],
+    isPublic?:boolean
 }
 
 
 const menuList: Imenu[] = [
     {
         title: '首页',
-        link: '/home',
-        icon: 'PieChartOutlined'
+        key: '/home',
+        icon: 'PieChartOutlined',
+        isPublic: true,
     },
     {
         title: '商品',
-        link: 'sub1',
+        key: '/category',
         icon: 'UnorderedListOutlined',
         children: [
             {
                 title: '品类管理',
-                link: '/Category',
+                key: '/Category',
                 icon: 'RocketOutlined'
             },
             {
                 title: '商品管理',
-                link: '/product',
+                key: '/product',
                 icon: 'ScheduleOutlined'
             }
         ]
     },
     {
         title: '用户管理',
-        link: '/user',
+        key: '/user',
         icon: 'UserOutlined'
     },
     {
         title: '角色管理',
-        link: '/role',
+        key: '/role',
         icon: 'SecurityScanOutlined'
     },
     {
         title: '图形图表',
-        link: 'sub2',
+        key: '/charts',
         icon: 'AppstoreOutlined',
         children: [
             {
                 title: '柱形图',
-                link: '/charts/bar',
+                key: '/charts/bar',
                 icon: 'AreaChartOutlined'
             },
             {
                 title: '折线图',
-                link: '/charts/line',
+                key: '/charts/line',
                 icon: 'LineChartOutlined'
             },
             {
                 title: '饼图',
-                link: '/charts/pie',
+                key: '/charts/pie',
                 icon: 'PieChartOutlined'
             }
         ]

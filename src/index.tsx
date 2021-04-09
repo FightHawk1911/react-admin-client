@@ -5,7 +5,7 @@ import storeageUtils from "./utils/storeageUtils";
 import memoryUtils from "./utils/memoryUtils";
 
 const user = storeageUtils.getUser()
-memoryUtils.user = Object.keys(user).length === 0 ? { _id: ""} : user
+memoryUtils.user = Object.keys(user).length === 0 ? { id: ""} : user
 
 ReactDOM.render(
     <App />,

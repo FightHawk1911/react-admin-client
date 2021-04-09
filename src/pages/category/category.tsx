@@ -1,6 +1,6 @@
 import React from 'react'
 import {Card, Button, Table, Modal} from 'antd'
-import { reqGetCategoryList } from "../../api";
+import { reqGetCategoryList, reqUpdateCategory, reqAddCategory } from "../../api";
 import {
     PlusOutlined,
     ArrowRightOutlined
@@ -17,10 +17,11 @@ export default class Category extends React.Component<any, any>{
     //更新模态框传入category name信息
     category: any
 
-    form: any
+    updateform: any
+    addform: any
 
     state = {
-        categorys: [],
+        categorys: [], //一级分类列表
         isLoading: false,
         parentId: '0',
         subCategorys: [],
@@ -84,16 +85,40 @@ export default class Category extends React.Component<any, any>{
             showStatus: 0
         })
     }
-    //模态框添加商品
-    addCategory =()=>{
+    //显示添加商品模态框
+    showAddCategory =()=>{
         this.setState({
             showStatus: 1
         })
-        //console.log('添加商品')
+
+
+        console.log('添加商品')
         //处理取消事件
         //this.handleCancel()
     }
 
+    //添加商品模态框点击ok回调
+    addCategory=()=>{
+        console.log('确认')
+        const {selectdvalue, categoryname} = this.addform.getFieldsValue()
+
+        reqAddCategory(selectdvalue, categoryname).then(
+            result=>{
+                if (result.data.status === 0){
+                    this.getCategoryList()
+                    this.handleCancel()
+                    this.addform.resetFields()
+                }
+            },
+            error =>{
+                console.log(error)
+            }
+        ).catch(err=>{
+            console.log(err)
+        })
+    }
+
+    //显示更新商品模态框
     showUpdate = (categary:any)=>{
         this.category = categary
         this.setState({
@@ -101,9 +126,23 @@ export default class Category extends React.Component<any, any>{
         })
     }
 
-    //104
+    //更新商品模态框点击ok回调
     updateCategory = () => {
-        console.log(this.form.getFieldValue('categoryname'))
+        const categoryId = this.category._id
+        const categoryName = this.updateform.getFieldValue('categoryname')
+
+        reqUpdateCategory(categoryId, categoryName).then(
+            result => {
+                if (result.data.status === 0){
+                    this.getCategoryList()
+                    this.handleCancel()
+                }
+            },
+            reason => {
+                console.log(reason)
+            }
+        )
+
     };
 
 
@@ -143,7 +182,7 @@ export default class Category extends React.Component<any, any>{
         ];
         return (
             <Card title={title}
-                  extra={<Button onClick={this.addCategory} type={"primary"} icon={<PlusOutlined />} >添加</Button>}>
+                  extra={<Button onClick={this.showAddCategory} type={"primary"} icon={<PlusOutlined />} >添加</Button>}>
 
                 <Modal title="添加商品"
                        visible={this.state.showStatus === 1}
@@ -151,7 +190,11 @@ export default class Category extends React.Component<any, any>{
                        onOk={this.addCategory}
                        cancelText="取消"
                        okText="确认">
-                    <AddForm />
+                    <AddForm
+                        categorys={this.state.categorys}
+                        parentId={this.state.parentId}
+                        setForm={(form:any)=>{this.addform = form}}
+                    />
                 </Modal>
 
                 <Modal title="更新商品"
@@ -164,7 +207,7 @@ export default class Category extends React.Component<any, any>{
                     {/*Modal隐藏显示时没有销毁 Modal 里的子元素UserForm，导致都每次读取上次的值。需加上 destroyOnClose*/}
                     <UpdateForm
                         categoryName={category.name}
-                        setForm={(form:any)=>{this.form = form}}
+                        setForm={(form:any)=>{this.updateform = form}}
                     />
                 </Modal>
 

@@ -37,7 +37,7 @@ export default class Login extends React.Component<any, any>{
     render() {
         // 如果存在用户id说明已经登陆, 重定向到登陆页面
         const user = memoryUtils.user
-        if (user._id !== ""){
+        if (user.id !== ""){
             return <Redirect to="/"/>
         }
 

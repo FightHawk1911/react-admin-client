@@ -1,5 +1,5 @@
 let user = {
-    _id: "",
+    id: "",
     username: ""
 }
 
